@@ -1,0 +1,11 @@
+Story	Task	Estimate min (hr)	Estimate max (hr)	Actual	Comment
+Setup	Project setup and planning	0.25	0.5		Git init, folder structure
+Backend	Express API setup	2	3		Auth, user/task CRUD
+Backend	Database setup	1	2		PostgreSQL schema and models
+Backend	AI endpoint	1	2		Simple suggest endpoint with stub
+Frontend	React app core	3	4		Auth UI, task management
+Frontend	Styling	1	2		Basic responsive CSS
+DevOps	Docker setup	1	2		Dockerfile, docker-compose
+DevOps	Cloud deploy	1	2		Deployment
+Docs	README & Demo	1	2		Documentation and video
+TOTAL		11.25	19		

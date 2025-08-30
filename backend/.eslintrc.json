@@ -12,6 +12,12 @@
     "no-console": "off",
     "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
     "import/extensions": ["error", "ignorePackages"],
-    "import/prefer-default-export": "off"
+    "import/prefer-default-export": "off",
+    "import/no-extraneous-dependencies": "off",
+    "comma-dangle": ["error", "never"],
+    "object-curly-newline": "off",
+    "object-curly-spacing": ["error", "never"],
+    "prefer-destructuring": "off",
+    "max-len": ["error", { "code": 120 }]
   }
 }

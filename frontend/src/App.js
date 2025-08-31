@@ -1,16 +1,19 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import {BrowserRouter as Router, Routes, Route, Navigate} from 'react-router-dom';
+import Login from './pages/login';
+import Register from './pages/register';
+import {isAuthenticated} from './services/auth';
 
 function App() {
-  const isAuthenticated = false;
+  const isAuth = isAuthenticated();
   
   return (
     <Router>
       <div className="min-h-screen bg-gray-50">
         <Routes>
-          <Route path="/login" element={<div>Login Page</div>} />
-          <Route path="/register" element={<div>Register Page</div>} />
-          <Route path="/dashboard" element={isAuthenticated ? <div>Dashboard</div> : <Navigate to="/login" />} />
-          <Route path="/" element={<Navigate to={isAuthenticated ? "/dashboard" : "/login"} />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/dashboard" element={isAuth ? <div>Dashboard</div> : <Navigate to="/login" />} />
+          <Route path="/" element={<Navigate to={isAuth ? "/dashboard" : "/login"} />} />
         </Routes>
       </div>
     </Router>

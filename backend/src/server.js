@@ -1,12 +1,14 @@
 import express from 'express';
 import cors from 'cors';
 import routes from './routes.js';
+import {limiter} from './middleware/rate-limit.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
 app.use(cors());
 app.use(express.json());
+app.use(limiter);
 
 app.get('/', (_, res) => {
   res.json({message: 'SprintSync API'});

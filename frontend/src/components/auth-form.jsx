@@ -15,9 +15,9 @@ export function AuthForm({
   hideSnackbar
 }) {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
       <div className="w-full max-w-md">
-        <div className="bg-white rounded-lg shadow-md p-8">
+        <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-6 sm:p-8">
           <h2 className="text-2xl font-bold text-center mb-6">{title}</h2>
           
           <form onSubmit={onSubmit} className="space-y-4">

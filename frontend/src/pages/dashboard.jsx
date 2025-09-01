@@ -111,7 +111,7 @@ export default function Dashboard() {
   };
 
   const taskStats = {
-    total: tasks.length,
+    total: totalTasks,
     todo: tasks.filter(t => t.status === 'TODO').length,
     inProgress: tasks.filter(t => t.status === 'IN_PROGRESS').length,
     done: tasks.filter(t => t.status === 'DONE').length
@@ -125,13 +125,13 @@ export default function Dashboard() {
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div>
-              <h1 className="text-xl font-semibold">SprintSync Dashboard</h1>
-              <p className="text-sm text-gray-600">
-                Hello, {userEmail} {userIsAdmin && <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full ml-2">Admin</span>}
+            <div className="flex-1">
+              <h1 className="text-lg sm:text-xl font-semibold">SprintSync</h1>
+              <p className="text-xs sm:text-sm text-gray-600 truncate max-w-[200px] sm:max-w-none">
+                {userEmail} {userIsAdmin && <span className="text-xs bg-blue-100 text-blue-800 px-1 sm:px-2 py-0.5 sm:py-1 rounded-full ml-1 sm:ml-2">Admin</span>}
               </p>
             </div>
-            <Button variant="outline" onClick={handleLogout}>
+            <Button variant="outline" onClick={handleLogout} size="sm">
               Logout
             </Button>
           </div>
@@ -139,48 +139,59 @@ export default function Dashboard() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-4 gap-4 mb-8">
-          <div className="bg-white rounded-lg shadow p-4">
-            <p className="text-sm text-gray-600">Total Tasks</p>
-            <p className="text-2xl font-bold">{taskStats.total}</p>
-          </div>
-          <div className="bg-white rounded-lg shadow p-4">
-            <p className="text-sm text-gray-600">To Do</p>
-            <p className="text-2xl font-bold text-gray-600">{taskStats.todo}</p>
-          </div>
-          <div className="bg-white rounded-lg shadow p-4">
-            <p className="text-sm text-gray-600">In Progress</p>
-            <p className="text-2xl font-bold text-blue-600">{taskStats.inProgress}</p>
-          </div>
-          <div className="bg-white rounded-lg shadow p-4">
-            <p className="text-sm text-gray-600">Done</p>
-            <p className="text-2xl font-bold text-green-600">{taskStats.done}</p>
+        <div className="bg-white rounded-lg shadow p-4 mb-6 sm:mb-8">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-xs sm:text-sm text-gray-600">Total Tasks</p>
+              <p className="text-2xl sm:text-3xl font-bold">{taskStats.total}</p>
+            </div>
+            <div className="text-right">
+              <p className="text-xs text-gray-500">Current page</p>
+              <div className="flex gap-4 mt-1">
+                <span className="text-sm">
+                  <span className="font-semibold text-gray-600">{taskStats.todo}</span>
+                  <span className="text-xs text-gray-500 ml-1">Todo</span>
+                </span>
+                <span className="text-sm">
+                  <span className="font-semibold text-blue-600">{taskStats.inProgress}</span>
+                  <span className="text-xs text-gray-500 ml-1">In Progress</span>
+                </span>
+                <span className="text-sm">
+                  <span className="font-semibold text-green-600">{taskStats.done}</span>
+                  <span className="text-xs text-gray-500 ml-1">Done</span>
+                </span>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+          <div className="flex flex-wrap gap-2 w-full sm:w-auto">
             <Button
               variant={filter === 'all' ? 'default' : 'outline'}
               onClick={() => setFilter('all')}
+              size="sm"
             >
-              All Tasks
+              All
             </Button>
             <Button
               variant={filter === 'TODO' ? 'default' : 'outline'}
               onClick={() => setFilter('TODO')}
+              size="sm"
             >
               To Do
             </Button>
             <Button
               variant={filter === 'IN_PROGRESS' ? 'default' : 'outline'}
               onClick={() => setFilter('IN_PROGRESS')}
+              size="sm"
             >
-              In Progress
+              Progress
             </Button>
             <Button
               variant={filter === 'DONE' ? 'default' : 'outline'}
               onClick={() => setFilter('DONE')}
+              size="sm"
             >
               Done
             </Button>
@@ -189,14 +200,14 @@ export default function Dashboard() {
           <Button onClick={() => {
             setEditingTask(null);
             setShowForm(true);
-          }}>
+          }} className="w-full sm:w-auto">
             + New Task
           </Button>
         </div>
 
         {showForm && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 w-full max-w-md">
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg p-4 sm:p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
               <h2 className="text-lg font-semibold mb-4">
                 {editingTask ? 'Edit Task' : 'Create New Task'}
               </h2>
@@ -228,24 +239,38 @@ export default function Dashboard() {
                   onStatusChange={handleStatusChange}
                 />
                 {totalTasks > pageSize && (
-                  <div className="flex justify-center items-center gap-2 mt-6 pt-6 border-t">
-                    <Button
-                      variant="outline"
-                      onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                      disabled={currentPage === 1}
-                    >
-                      Previous
-                    </Button>
-                    <span className="px-4 text-sm text-gray-600">
-                      Page {currentPage} of {Math.ceil(totalTasks / pageSize)}
+                  <div className="flex flex-col sm:flex-row justify-center items-center gap-3 mt-6 pt-6 border-t">
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                        disabled={currentPage === 1}
+                      >
+                        <span className="hidden sm:inline">Previous</span>
+                        <span className="sm:hidden">Prev</span>
+                      </Button>
+                      <div className="flex items-center gap-1">
+                        <span className="text-xs sm:text-sm text-gray-600">
+                          {currentPage}
+                        </span>
+                        <span className="text-xs sm:text-sm text-gray-400">/</span>
+                        <span className="text-xs sm:text-sm text-gray-600">
+                          {Math.ceil(totalTasks / pageSize)}
+                        </span>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setCurrentPage(Math.min(Math.ceil(totalTasks / pageSize), currentPage + 1))}
+                        disabled={currentPage === Math.ceil(totalTasks / pageSize)}
+                      >
+                        Next
+                      </Button>
+                    </div>
+                    <span className="text-xs text-gray-500">
+                      {totalTasks} total tasks
                     </span>
-                    <Button
-                      variant="outline"
-                      onClick={() => setCurrentPage(Math.min(Math.ceil(totalTasks / pageSize), currentPage + 1))}
-                      disabled={currentPage === Math.ceil(totalTasks / pageSize)}
-                    >
-                      Next
-                    </Button>
                   </div>
                 )}
               </>

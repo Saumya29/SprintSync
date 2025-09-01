@@ -25,15 +25,15 @@ export function Snackbar({
   };
 
   return (
-    <div className="fixed top-4 right-4 z-50 animate-in slide-in-from-top">
+    <div className="fixed top-4 left-4 right-4 sm:left-auto sm:right-4 z-50 animate-in slide-in-from-top">
       <div className={clsx(
-        'flex items-center justify-between min-w-[300px] max-w-md px-4 py-3 rounded-lg text-white shadow-lg',
+        'flex items-center justify-between w-full sm:min-w-[300px] sm:max-w-md px-4 py-3 rounded-lg text-white shadow-lg',
         variants[type]
       )}>
-        <span className="text-sm font-medium">{message}</span>
+        <span className="text-sm font-medium flex-1 mr-2">{message}</span>
         <button
           onClick={onClose}
-          className="ml-4 text-white hover:text-gray-200 focus:outline-none"
+          className="ml-2 text-white hover:text-gray-200 focus:outline-none flex-shrink-0"
         >
           ✕
         </button>

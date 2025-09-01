@@ -43,7 +43,7 @@ export const addTask = async (req, res) => {
       title,
       description,
       status: status || 'TODO',
-      totalMinutes: totalMinutes || 0,
+      totalMinutes: parseInt(totalMinutes, 10) || 0,
       userId: userId && isAdmin ? userId : currentUserId
     };
 
@@ -68,7 +68,12 @@ export const modifyTask = async (req, res) => {
     }
 
     const updateData = Object.fromEntries(
-      Object.entries({title, description, status, totalMinutes})
+      Object.entries({
+        title,
+        description,
+        status,
+        totalMinutes: totalMinutes !== undefined ? parseInt(totalMinutes, 10) : undefined
+      })
         .filter(([_, value]) => value !== undefined)
     );
     if (userId !== undefined && isAdmin) {

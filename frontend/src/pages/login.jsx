@@ -33,7 +33,8 @@ const Login = () => {
       type: 'password',
       placeholder: 'Enter your password',
       value: password,
-      onChange: (e) => setPassword(e.target.value)
+      onChange: (e) => setPassword(e.target.value),
+      helperText: 'Must be at least 8 characters with uppercase, lowercase, number, and special character (!@#$%^&*)'
     }
   ];
 

@@ -34,6 +34,9 @@ export function AuthForm({
                   onChange={field.onChange}
                   required
                 />
+                {field.helperText && (
+                  <p className="text-xs text-gray-500 mt-1">{field.helperText}</p>
+                )}
               </div>
             ))}
 

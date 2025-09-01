@@ -16,6 +16,9 @@ export default function Dashboard() {
   const [editingTask, setEditingTask] = useState(null);
   const [filter, setFilter] = useState('all');
   const [deleteConfirm, setDeleteConfirm] = useState({isOpen: false, taskId: null, taskTitle: ''});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalTasks, setTotalTasks] = useState(0);
+  const pageSize = 10;
   const navigate = useNavigate();
   const {snackbar, showError, showSuccess, hideSnackbar} = useSnackbar();
 
@@ -23,8 +26,9 @@ export default function Dashboard() {
     const loadTasks = async () => {
       try {
         setLoading(true);
-        const data = await getTasks();
-        setTasks(data);
+        const data = await getTasks(currentPage, pageSize);
+        setTasks(data.tasks);
+        setTotalTasks(data.total);
       } catch (err) {
         showError('Failed to load tasks');
       } finally {
@@ -32,12 +36,16 @@ export default function Dashboard() {
       }
     };
     loadTasks();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage]);
 
   const handleCreateTask = async (taskData) => {
     try {
-      const newTask = await createTask(taskData);
-      setTasks([...tasks, newTask]);
+      await createTask(taskData);
+      setCurrentPage(1);
+      const data = await getTasks(1, pageSize);
+      setTasks(data.tasks);
+      setTotalTasks(data.total);
       setShowForm(false);
       showSuccess('Task created successfully');
     } catch (err) {
@@ -68,7 +76,13 @@ export default function Dashboard() {
   const confirmDelete = async () => {
     try {
       await deleteTask(deleteConfirm.taskId);
-      setTasks(tasks.filter(t => t.id !== deleteConfirm.taskId));
+      const data = await getTasks(currentPage, pageSize);
+      if (data.tasks.length === 0 && currentPage > 1) {
+        setCurrentPage(currentPage - 1);
+      } else {
+        setTasks(data.tasks);
+        setTotalTasks(data.total);
+      }
       showSuccess('Task deleted successfully');
       setDeleteConfirm({isOpen: false, taskId: null, taskTitle: ''});
     } catch (err) {
@@ -205,13 +219,36 @@ export default function Dashboard() {
                 <p className="text-gray-500">Loading tasks...</p>
               </div>
             ) : (
-              <TaskList
-                tasks={tasks}
-                filter={filter}
-                onEdit={handleEdit}
-                onDelete={handleDeleteTask}
-                onStatusChange={handleStatusChange}
-              />
+              <>
+                <TaskList
+                  tasks={tasks}
+                  filter={filter}
+                  onEdit={handleEdit}
+                  onDelete={handleDeleteTask}
+                  onStatusChange={handleStatusChange}
+                />
+                {totalTasks > pageSize && (
+                  <div className="flex justify-center items-center gap-2 mt-6 pt-6 border-t">
+                    <Button
+                      variant="outline"
+                      onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                      disabled={currentPage === 1}
+                    >
+                      Previous
+                    </Button>
+                    <span className="px-4 text-sm text-gray-600">
+                      Page {currentPage} of {Math.ceil(totalTasks / pageSize)}
+                    </span>
+                    <Button
+                      variant="outline"
+                      onClick={() => setCurrentPage(Math.min(Math.ceil(totalTasks / pageSize), currentPage + 1))}
+                      disabled={currentPage === Math.ceil(totalTasks / pageSize)}
+                    >
+                      Next
+                    </Button>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>

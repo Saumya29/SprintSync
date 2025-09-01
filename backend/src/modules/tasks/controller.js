@@ -3,8 +3,10 @@ import {findAllTasks, findTaskById, createTask, updateTask, deleteTask} from './
 export const getTasks = async (req, res) => {
   try {
     const {id, isAdmin} = req.user;
-    const tasks = await findAllTasks(id, isAdmin);
-    return res.json(tasks);
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 10;
+    const result = await findAllTasks(id, isAdmin, page, limit);
+    return res.json(result);
   } catch (error) {
     return res.status(500).json({message: 'Failed to fetch tasks', error: error.message});
   }

@@ -1,7 +1,7 @@
 import {get, post, patch, remove} from './api';
 
-export const getTasks = () => {
-  return get('/tasks');
+export const getTasks = (page = 1, limit = 10) => {
+  return get(`/tasks?page=${page}&limit=${limit}`);
 };
 
 export const getTask = (id) => {

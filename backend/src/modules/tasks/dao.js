@@ -1,6 +1,7 @@
 import prisma from '../../lib/prisma.js';
 
-export const findAllTasks = async (userId, isAdmin) => {
+export const findAllTasks = async (userId, isAdmin, page = 1, limit = 10) => {
+  const skip = (page - 1) * limit;
   const baseSelect = {
     id: true,
     title: true,
@@ -9,9 +10,11 @@ export const findAllTasks = async (userId, isAdmin) => {
     totalMinutes: true
   };
 
-  if (isAdmin) {
-    return prisma.task.findMany({
-      select: {
+  const where = isAdmin ? {} : {userId};
+  const [tasks, total] = await Promise.all([
+    prisma.task.findMany({
+      where,
+      select: isAdmin ? {
         ...baseSelect,
         userId: true,
         user: {
@@ -19,14 +22,18 @@ export const findAllTasks = async (userId, isAdmin) => {
             email: true
           }
         }
-      }
-    });
-  }
+      } : baseSelect,
+      skip,
+      take: limit,
+      orderBy: {createdAt: 'desc'}
+    }),
+    prisma.task.count({where})
+  ]);
 
-  return prisma.task.findMany({
-    where: {userId},
-    select: baseSelect
-  });
+  return {
+    tasks,
+    total
+  };
 };
 
 export const findTaskById = async (id) => prisma.task.findUnique({

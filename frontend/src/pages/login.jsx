@@ -1,5 +1,4 @@
 import {useState} from 'react';
-import {useNavigate} from 'react-router-dom';
 import {AuthForm} from '../components/auth-form';
 import {login} from '../services/auth';
 import {useSnackbar} from '../hooks/use-snackbar';
@@ -7,14 +6,13 @@ import {useSnackbar} from '../hooks/use-snackbar';
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigate = useNavigate();
   const {snackbar, showError, hideSnackbar} = useSnackbar();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await login(email, password);
-      navigate('/dashboard');
+      window.location.href = '/dashboard';
     } catch (err) {
       showError(err.message);
     }

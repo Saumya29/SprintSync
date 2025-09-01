@@ -1,6 +1,7 @@
 import {BrowserRouter as Router, Routes, Route, Navigate} from 'react-router-dom';
 import Login from './pages/login';
 import Register from './pages/register';
+import Dashboard from './pages/dashboard';
 import {isAuthenticated} from './services/auth';
 
 function App() {
@@ -12,8 +13,8 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/dashboard" element={isAuth ? <div>Dashboard</div> : <Navigate to="/login" />} />
-          <Route path="/" element={<Navigate to={isAuth ? "/dashboard" : "/login"} />} />
+          <Route path="/dashboard" element={isAuth ? <Dashboard /> : <Navigate to="/login" />} />
+          <Route path="*" element={<Navigate to={isAuth ? "/dashboard" : "/login"} />} />
         </Routes>
       </div>
     </Router>

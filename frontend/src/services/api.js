@@ -1,4 +1,4 @@
-const API_URL = process.env.API_URL;
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
 
 const request = async (endpoint, options = {}) => {
   const url = `${API_URL}${endpoint}`;

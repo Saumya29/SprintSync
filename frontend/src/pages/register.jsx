@@ -21,8 +21,8 @@ const Register = () => {
 
     try {
       await register(email, password);
-      showSuccess('Registration successful! Please login.');
-      setTimeout(() => navigate('/login'), 2000);
+      showSuccess('Registration successful!');
+      window.location.href = '/dashboard';
     } catch (err) {
       showError(err.message);
     }

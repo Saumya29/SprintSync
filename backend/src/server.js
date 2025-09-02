@@ -19,6 +19,14 @@ app.get('/', (_, res) => {
   res.json({message: 'SprintSync API'});
 });
 
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime()
+  });
+});
+
 app.use('/api', routes);
 
 app.use(errorLogger);

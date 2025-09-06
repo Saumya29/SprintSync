@@ -2,6 +2,7 @@ import {useState, useEffect} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {Button} from '../components/ui/button';
 import {TaskList} from '../components/task-list';
+import {KanbanBoard} from '../components/kanban-board';
 import {TaskForm} from '../components/task-form';
 import {useSnackbar} from '../hooks/use-snackbar';
 import {Snackbar} from '../components/ui/snackbar';
@@ -18,6 +19,7 @@ export default function Dashboard() {
   const [deleteConfirm, setDeleteConfirm] = useState({isOpen: false, taskId: null, taskTitle: ''});
   const [currentPage, setCurrentPage] = useState(1);
   const [totalTasks, setTotalTasks] = useState(0);
+  const [viewMode, setViewMode] = useState('kanban'); // 'list' or 'kanban'
   const pageSize = 10;
   const navigate = useNavigate();
   const {snackbar, showError, showSuccess, hideSnackbar} = useSnackbar();
@@ -166,35 +168,56 @@ export default function Dashboard() {
         </div>
 
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-          <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-            <Button
-              variant={filter === 'all' ? 'default' : 'outline'}
-              onClick={() => setFilter('all')}
-              size="sm"
-            >
-              All
-            </Button>
-            <Button
-              variant={filter === 'TODO' ? 'default' : 'outline'}
-              onClick={() => setFilter('TODO')}
-              size="sm"
-            >
-              To Do
-            </Button>
-            <Button
-              variant={filter === 'IN_PROGRESS' ? 'default' : 'outline'}
-              onClick={() => setFilter('IN_PROGRESS')}
-              size="sm"
-            >
-              Progress
-            </Button>
-            <Button
-              variant={filter === 'DONE' ? 'default' : 'outline'}
-              onClick={() => setFilter('DONE')}
-              size="sm"
-            >
-              Done
-            </Button>
+          <div className="flex items-center gap-4 w-full sm:w-auto">
+            <div className="flex gap-2">
+              <Button
+                variant={viewMode === 'kanban' ? 'default' : 'outline'}
+                onClick={() => setViewMode('kanban')}
+                size="sm"
+              >
+                Kanban
+              </Button>
+              <Button
+                variant={viewMode === 'list' ? 'default' : 'outline'}
+                onClick={() => setViewMode('list')}
+                size="sm"
+              >
+                List
+              </Button>
+            </div>
+            
+            {viewMode === 'list' && (
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  variant={filter === 'all' ? 'default' : 'outline'}
+                  onClick={() => setFilter('all')}
+                  size="sm"
+                >
+                  All
+                </Button>
+                <Button
+                  variant={filter === 'TODO' ? 'default' : 'outline'}
+                  onClick={() => setFilter('TODO')}
+                  size="sm"
+                >
+                  To Do
+                </Button>
+                <Button
+                  variant={filter === 'IN_PROGRESS' ? 'default' : 'outline'}
+                  onClick={() => setFilter('IN_PROGRESS')}
+                  size="sm"
+                >
+                  Progress
+                </Button>
+                <Button
+                  variant={filter === 'DONE' ? 'default' : 'outline'}
+                  onClick={() => setFilter('DONE')}
+                  size="sm"
+                >
+                  Done
+                </Button>
+              </div>
+            )}
           </div>
 
           <Button onClick={() => {
@@ -229,6 +252,13 @@ export default function Dashboard() {
               <div className="text-center py-12">
                 <p className="text-gray-500">Loading tasks...</p>
               </div>
+            ) : viewMode === 'kanban' ? (
+              <KanbanBoard
+                tasks={tasks}
+                onEdit={handleEdit}
+                onDelete={handleDeleteTask}
+                onStatusChange={handleStatusChange}
+              />
             ) : (
               <>
                 <TaskList

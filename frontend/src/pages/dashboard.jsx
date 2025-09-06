@@ -3,6 +3,7 @@ import {useNavigate} from 'react-router-dom';
 import {Button} from '../components/ui/button';
 import {TaskList} from '../components/task-list';
 import {KanbanBoard} from '../components/kanban-board';
+import {AnalyticsChart} from '../components/analytics-chart';
 import {TaskForm} from '../components/task-form';
 import {useSnackbar} from '../hooks/use-snackbar';
 import {Snackbar} from '../components/ui/snackbar';
@@ -19,7 +20,7 @@ export default function Dashboard() {
   const [deleteConfirm, setDeleteConfirm] = useState({isOpen: false, taskId: null, taskTitle: ''});
   const [currentPage, setCurrentPage] = useState(1);
   const [totalTasks, setTotalTasks] = useState(0);
-  const [viewMode, setViewMode] = useState('kanban'); // 'list' or 'kanban'
+  const [viewMode, setViewMode] = useState('kanban'); // 'list', 'kanban', or 'analytics'
   const pageSize = 10;
   const navigate = useNavigate();
   const {snackbar, showError, showSuccess, hideSnackbar} = useSnackbar();
@@ -184,6 +185,13 @@ export default function Dashboard() {
               >
                 List
               </Button>
+              <Button
+                variant={viewMode === 'analytics' ? 'default' : 'outline'}
+                onClick={() => setViewMode('analytics')}
+                size="sm"
+              >
+                Analytics
+              </Button>
             </div>
             
             {viewMode === 'list' && (
@@ -252,6 +260,8 @@ export default function Dashboard() {
               <div className="text-center py-12">
                 <p className="text-gray-500">Loading tasks...</p>
               </div>
+            ) : viewMode === 'analytics' ? (
+              <AnalyticsChart tasks={tasks} />
             ) : viewMode === 'kanban' ? (
               <KanbanBoard
                 tasks={tasks}

@@ -1,4 +1,19 @@
-import {useMemo} from 'react';
+import {useState, useMemo} from 'react';
+import {
+  DndContext,
+  DragOverlay,
+  closestCorners,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import {DraggableCard} from './draggable-card';
 
 const COLUMNS = [
   {id: 'TODO', title: 'To Do', color: 'bg-red-50'},
@@ -6,7 +21,21 @@ const COLUMNS = [
   {id: 'DONE', title: 'Done', color: 'bg-green-50'},
 ];
 
-export function KanbanBoard({tasks, onEdit, onDelete}) {
+export function KanbanBoard({tasks, onEdit, onDelete, onStatusChange}) {
+  const [activeId, setActiveId] = useState(null);
+  
+  // Configure drag sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 10, // 10px movement required to start drag
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+  
   const tasksByColumn = useMemo(() => {
     const grouped = {
       TODO: [],
@@ -23,8 +52,43 @@ export function KanbanBoard({tasks, onEdit, onDelete}) {
     return grouped;
   }, [tasks]);
 
+  const handleDragStart = (event) => {
+    setActiveId(event.active.id);
+  };
+
+  const handleDragEnd = (event) => {
+    const {active, over} = event;
+    setActiveId(null);
+    
+    if (!over) return;
+    
+    const activeTask = tasks.find(t => t.id === active.id);
+    if (!activeTask) return;
+    
+    let targetStatus = COLUMNS.find(col => col.id === over.id)?.id;
+    if (!targetStatus) {
+      const overTask = tasks.find(t => t.id === over.id);
+      targetStatus = overTask?.status;
+    }
+    
+    if (targetStatus && activeTask.status !== targetStatus) {
+      onStatusChange(activeTask.id, targetStatus);
+    }
+  };
+
+  const activeTask = useMemo(
+    () => tasks.find(t => t.id === activeId),
+    [activeId, tasks]
+  );
+
   return (
-    <div className="flex gap-4 overflow-x-auto pb-4">
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCorners}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+    >
+      <div className="flex gap-4 overflow-x-auto pb-4">
         {COLUMNS.map(column => (
           <div key={column.id} className={`flex-1 min-w-[300px] ${column.color} rounded-lg p-4`}>
             <div className="flex items-center justify-between mb-4">
@@ -33,43 +97,41 @@ export function KanbanBoard({tasks, onEdit, onDelete}) {
                 {tasksByColumn[column.id].length}
               </span>
             </div>
-            <div className="space-y-2 min-h-[100px]">
-              {tasksByColumn[column.id].length === 0 ? (
-                <div className="text-center py-8 text-gray-400 text-sm">
-                  No tasks
-                </div>
-              ) : (
-                tasksByColumn[column.id].map(task => (
-                <div key={task.id} className="bg-white p-3 rounded shadow hover:shadow-md transition-shadow cursor-pointer">
-                  <h4 className="font-medium text-sm mb-1">{task.title}</h4>
-                  {task.description && (
-                    <p className="text-xs text-gray-600 mb-2 line-clamp-2">{task.description}</p>
-                  )}
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-gray-500">
-                      {task.totalMinutes ? `${task.totalMinutes} min` : 'No time logged'}
-                    </span>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => onEdit(task)}
-                        className="text-blue-600 hover:text-blue-800 text-xs"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => onDelete(task)}
-                        className="text-red-600 hover:text-red-800 text-xs"
-                      >
-                        Delete
-                      </button>
-                    </div>
+            <SortableContext
+              items={tasksByColumn[column.id].map(t => t.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              <div className="space-y-2 min-h-[100px]">
+                {tasksByColumn[column.id].length === 0 ? (
+                  <div className="text-center py-8 text-gray-400 text-sm">
+                    No tasks
                   </div>
-                </div>
-                ))
-              )}
-            </div>
+                ) : (
+                  tasksByColumn[column.id].map(task => (
+                    <DraggableCard 
+                      key={task.id}
+                      task={task}
+                      onEdit={onEdit}
+                      onDelete={onDelete}
+                    />
+                  ))
+                )}
+              </div>
+            </SortableContext>
           </div>
         ))}
-    </div>
+      </div>
+      
+      <DragOverlay>
+        {activeTask ? (
+          <div className="bg-white p-3 rounded shadow-lg opacity-90 cursor-grabbing">
+            <h4 className="font-medium text-sm mb-1">{activeTask.title}</h4>
+            {activeTask.description && (
+              <p className="text-xs text-gray-600 mb-2 line-clamp-2">{activeTask.description}</p>
+            )}
+          </div>
+        ) : null}
+      </DragOverlay>
+    </DndContext>
   );
 }

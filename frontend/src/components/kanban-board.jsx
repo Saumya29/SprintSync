@@ -7,6 +7,7 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  useDroppable,
 } from '@dnd-kit/core';
 import {
   SortableContext,
@@ -20,6 +21,47 @@ const COLUMNS = [
   {id: 'IN_PROGRESS', title: 'In Progress', color: 'bg-blue-50'},
   {id: 'DONE', title: 'Done', color: 'bg-green-50'},
 ];
+
+function DroppableColumn({column, tasks, onEdit, onDelete}) {
+  const {setNodeRef} = useDroppable({
+    id: column.id,
+  });
+  
+  return (
+    <div 
+      ref={setNodeRef}
+      className={`flex-1 min-w-[300px] ${column.color} rounded-lg p-4`}
+    >
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="font-semibold">{column.title}</h3>
+        <span className="bg-white px-2 py-1 rounded text-xs font-medium">
+          {tasks.length}
+        </span>
+      </div>
+      <SortableContext
+        items={tasks.map(t => t.id)}
+        strategy={verticalListSortingStrategy}
+      >
+        <div className="space-y-2 min-h-[100px]">
+          {tasks.length === 0 ? (
+            <div className="text-center py-8 text-gray-400 text-sm">
+              No tasks
+            </div>
+          ) : (
+            tasks.map(task => (
+              <DraggableCard 
+                key={task.id}
+                task={task}
+                onEdit={onEdit}
+                onDelete={onDelete}
+              />
+            ))
+          )}
+        </div>
+      </SortableContext>
+    </div>
+  );
+}
 
 export function KanbanBoard({tasks, onEdit, onDelete, onStatusChange}) {
   const [activeId, setActiveId] = useState(null);
@@ -90,35 +132,13 @@ export function KanbanBoard({tasks, onEdit, onDelete, onStatusChange}) {
     >
       <div className="flex gap-4 overflow-x-auto pb-4">
         {COLUMNS.map(column => (
-          <div key={column.id} className={`flex-1 min-w-[300px] ${column.color} rounded-lg p-4`}>
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-semibold">{column.title}</h3>
-              <span className="bg-white px-2 py-1 rounded text-xs font-medium">
-                {tasksByColumn[column.id].length}
-              </span>
-            </div>
-            <SortableContext
-              items={tasksByColumn[column.id].map(t => t.id)}
-              strategy={verticalListSortingStrategy}
-            >
-              <div className="space-y-2 min-h-[100px]">
-                {tasksByColumn[column.id].length === 0 ? (
-                  <div className="text-center py-8 text-gray-400 text-sm">
-                    No tasks
-                  </div>
-                ) : (
-                  tasksByColumn[column.id].map(task => (
-                    <DraggableCard 
-                      key={task.id}
-                      task={task}
-                      onEdit={onEdit}
-                      onDelete={onDelete}
-                    />
-                  ))
-                )}
-              </div>
-            </SortableContext>
-          </div>
+          <DroppableColumn
+            key={column.id}
+            column={column}
+            tasks={tasksByColumn[column.id]}
+            onEdit={onEdit}
+            onDelete={onDelete}
+          />
         ))}
       </div>
       

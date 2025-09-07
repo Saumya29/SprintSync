@@ -5,6 +5,7 @@ import {TaskList} from '../components/task-list';
 import {KanbanBoard} from '../components/kanban-board';
 import {AnalyticsChart} from '../components/analytics-chart';
 import {TaskForm} from '../components/task-form';
+import {Logo} from '../components/logo';
 import {useSnackbar} from '../hooks/use-snackbar';
 import {Snackbar} from '../components/ui/snackbar';
 import {ConfirmModal} from '../components/ui/modal';
@@ -128,11 +129,13 @@ export default function Dashboard() {
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex-1">
-              <h1 className="text-lg sm:text-xl font-semibold">SprintSync</h1>
-              <p className="text-xs sm:text-sm text-gray-600 truncate max-w-[200px] sm:max-w-none">
-                {userEmail} {userIsAdmin && <span className="text-xs bg-blue-100 text-blue-800 px-1 sm:px-2 py-0.5 sm:py-1 rounded-full ml-1 sm:ml-2">Admin</span>}
-              </p>
+            <div className="flex items-center gap-4 flex-1">
+              <Logo />
+              <div className="border-l pl-4 hidden sm:block">
+                <p className="text-xs sm:text-sm text-gray-600 truncate">
+                  {userEmail} {userIsAdmin && <span className="text-xs bg-blue-100 text-blue-800 px-1 sm:px-2 py-0.5 sm:py-1 rounded-full ml-1 sm:ml-2">Admin</span>}
+                </p>
+              </div>
             </div>
             <Button variant="outline" onClick={handleLogout} size="sm">
               Logout

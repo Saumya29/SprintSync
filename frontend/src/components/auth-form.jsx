@@ -2,6 +2,7 @@ import {Link} from 'react-router-dom';
 import {Button} from './ui/button';
 import {Input} from './ui/input';
 import {Snackbar} from './ui/snackbar';
+import {Logo} from './logo';
 
 export function AuthForm({
   title,
@@ -18,7 +19,10 @@ export function AuthForm({
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
       <div className="w-full max-w-md">
         <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-6 sm:p-8">
-          <h2 className="text-2xl font-bold text-center mb-6">{title}</h2>
+          <div className="flex justify-center mb-2">
+            <Logo size="lg" />
+          </div>
+          <h2 className="text-2xl font-bold text-center mb-4">{title}</h2>
           
           <form onSubmit={onSubmit} className="space-y-4">
             {fields.map((field) => (

@@ -48,6 +48,16 @@ export const findTaskById = async (id) => prisma.task.findUnique({
   }
 });
 
+export const findTaskByTitleAndUser = async (title, userId) => prisma.task.findFirst({
+  where: {
+    title: {
+      equals: title,
+      mode: 'insensitive'
+    },
+    userId
+  }
+});
+
 export const createTask = async (data) => prisma.task.create({
   data,
   select: {

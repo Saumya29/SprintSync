@@ -43,31 +43,32 @@ export default function Dashboard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage]);
 
-  const handleCreateTask = async (taskData) => {
+  const handleTaskSubmit = async (taskData, isEdit = false) => {
     try {
-      await createTask(taskData);
-      setCurrentPage(1);
-      const data = await getTasks(1, pageSize);
-      setTasks(data.tasks);
-      setTotalTasks(data.total);
+      if (isEdit) {
+        const updated = await updateTask(editingTask.id, taskData);
+        setTasks(tasks.map(t => t.id === editingTask.id ? updated : t));
+        setEditingTask(null);
+      } else {
+        await createTask(taskData);
+        setCurrentPage(1);
+        const data = await getTasks(1, pageSize);
+        setTasks(data.tasks);
+        setTotalTasks(data.total);
+      }
       setShowForm(false);
-      showSuccess('Task created successfully');
+      showSuccess(isEdit ? 'Task updated successfully' : 'Task created successfully');
     } catch (err) {
-      showError('Failed to create task');
+      if (err.response?.status === 409) {
+        showError(err.response.data.message || 'A task with this title already exists');
+      } else {
+        showError(isEdit ? 'Failed to update task' : 'Failed to create task');
+      }
     }
   };
 
-  const handleUpdateTask = async (taskData) => {
-    try {
-      const updated = await updateTask(editingTask.id, taskData);
-      setTasks(tasks.map(t => t.id === editingTask.id ? updated : t));
-      setEditingTask(null);
-      setShowForm(false);
-      showSuccess('Task updated successfully');
-    } catch (err) {
-      showError('Failed to update task');
-    }
-  };
+  const handleCreateTask = (taskData) => handleTaskSubmit(taskData, false);
+  const handleUpdateTask = (taskData) => handleTaskSubmit(taskData, true);
 
   const handleDeleteTask = (task) => {
     setDeleteConfirm({

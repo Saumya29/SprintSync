@@ -1,4 +1,4 @@
-import {findAllTasks, findTaskById, createTask, updateTask, deleteTask} from './dao.js';
+import {findAllTasks, findTaskById, findTaskByTitleAndUser, createTask, updateTask, deleteTask} from './dao.js';
 
 export const getTasks = async (req, res) => {
   try {
@@ -32,11 +32,16 @@ export const getTask = async (req, res) => {
 
 export const addTask = async (req, res) => {
   try {
-    const {title, description, status, totalMinutes, userId} = req.body;
-    const {id: currentUserId, isAdmin} = req.user;
+    const {title, description, status, totalMinutes} = req.body;
+    const {id: currentUserId} = req.user;
 
     if (!title) {
       return res.status(422).json({message: 'Title is required'});
+    }
+
+    const existingTask = await findTaskByTitleAndUser(title, currentUserId);
+    if (existingTask) {
+      return res.status(409).json({message: 'A task with this title already exists'});
     }
 
     const taskData = {
@@ -44,7 +49,7 @@ export const addTask = async (req, res) => {
       description,
       status: status || 'TODO',
       totalMinutes: parseInt(totalMinutes, 10) || 0,
-      userId: userId && isAdmin ? userId : currentUserId
+      userId: currentUserId
     };
 
     const task = await createTask(taskData);
@@ -58,13 +63,20 @@ export const modifyTask = async (req, res) => {
   try {
     const {id} = req.params;
     const taskId = parseInt(id, 10);
-    const {title, description, status, totalMinutes, userId} = req.body;
+    const {title, description, status, totalMinutes} = req.body;
     const {id: currentUserId, isAdmin} = req.user;
 
     const task = await findTaskById(taskId);
 
     if (!task || (task.userId !== currentUserId && !isAdmin)) {
       return res.status(404).json({message: 'Task not found'});
+    }
+
+    if (title && title !== task.title) {
+      const duplicateTask = await findTaskByTitleAndUser(title, task.userId);
+      if (duplicateTask) {
+        return res.status(409).json({message: 'A task with this title already exists'});
+      }
     }
 
     const updateData = Object.fromEntries(
@@ -76,9 +88,6 @@ export const modifyTask = async (req, res) => {
       })
         .filter(([_, value]) => value !== undefined)
     );
-    if (userId !== undefined && isAdmin) {
-      updateData.userId = userId;
-    }
 
     await updateTask(taskId, updateData);
     return res.json({message: 'Task updated successfully'});

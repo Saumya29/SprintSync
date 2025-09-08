@@ -89,8 +89,8 @@ export const modifyTask = async (req, res) => {
         .filter(([_, value]) => value !== undefined)
     );
 
-    await updateTask(taskId, updateData);
-    return res.json({message: 'Task updated successfully'});
+    const updatedTask = await updateTask(taskId, updateData);
+    return res.json(updatedTask);
   } catch (error) {
     return res.status(500).json({message: 'Failed to update task', error: error.message});
   }

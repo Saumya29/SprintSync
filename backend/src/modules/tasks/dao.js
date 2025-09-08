@@ -72,7 +72,15 @@ export const createTask = async (data) => prisma.task.create({
 
 export const updateTask = async (id, data) => prisma.task.update({
   where: {id},
-  data
+  data,
+  select: {
+    id: true,
+    title: true,
+    description: true,
+    status: true,
+    totalMinutes: true,
+    userId: true
+  }
 });
 
 export const deleteTask = async (id) => prisma.task.delete({

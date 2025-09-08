@@ -171,8 +171,8 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-          <div className="flex items-center gap-4 w-full sm:w-auto">
+        <div className="flex flex-col gap-4 mb-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div className="flex gap-2">
               <Button
                 variant={viewMode === 'kanban' ? 'default' : 'outline'}
@@ -198,47 +198,59 @@ export default function Dashboard() {
                 </Button>
               )}
             </div>
-            
-            {viewMode === 'list' && (
-              <div className="flex flex-wrap gap-2">
-                <Button
-                  variant={filter === 'all' ? 'default' : 'outline'}
-                  onClick={() => setFilter('all')}
-                  size="sm"
-                >
-                  All
-                </Button>
-                <Button
-                  variant={filter === 'TODO' ? 'default' : 'outline'}
-                  onClick={() => setFilter('TODO')}
-                  size="sm"
-                >
-                  To Do
-                </Button>
-                <Button
-                  variant={filter === 'IN_PROGRESS' ? 'default' : 'outline'}
-                  onClick={() => setFilter('IN_PROGRESS')}
-                  size="sm"
-                >
-                  Progress
-                </Button>
-                <Button
-                  variant={filter === 'DONE' ? 'default' : 'outline'}
-                  onClick={() => setFilter('DONE')}
-                  size="sm"
-                >
-                  Done
-                </Button>
-              </div>
-            )}
-          </div>
 
-          <Button onClick={() => {
-            setEditingTask(null);
-            setShowForm(true);
-          }} className="w-full sm:w-auto">
-            + New Task
-          </Button>
+            <Button onClick={() => {
+              setEditingTask(null);
+              setShowForm(true);
+            }} className="w-full sm:w-auto">
+              + New Task
+            </Button>
+          </div>
+          
+          {viewMode === 'list' && (
+            <div className="flex gap-1.5">
+              <button
+                className={`px-2.5 py-1 text-xs rounded-md transition-colors ${
+                  filter === 'all' 
+                    ? 'bg-primary text-white' 
+                    : 'border border-gray-300 text-gray-600 hover:bg-gray-50'
+                }`}
+                onClick={() => setFilter('all')}
+              >
+                All
+              </button>
+              <button
+                className={`px-2.5 py-1 text-xs rounded-md transition-colors ${
+                  filter === 'TODO' 
+                    ? 'bg-primary text-white' 
+                    : 'border border-gray-300 text-gray-600 hover:bg-gray-50'
+                }`}
+                onClick={() => setFilter('TODO')}
+              >
+                To Do
+              </button>
+              <button
+                className={`px-2.5 py-1 text-xs rounded-md transition-colors ${
+                  filter === 'IN_PROGRESS' 
+                    ? 'bg-primary text-white' 
+                    : 'border border-gray-300 text-gray-600 hover:bg-gray-50'
+                }`}
+                onClick={() => setFilter('IN_PROGRESS')}
+              >
+                In Progress
+              </button>
+              <button
+                className={`px-2.5 py-1 text-xs rounded-md transition-colors ${
+                  filter === 'DONE' 
+                    ? 'bg-primary text-white' 
+                    : 'border border-gray-300 text-gray-600 hover:bg-gray-50'
+                }`}
+                onClick={() => setFilter('DONE')}
+              >
+                Done
+              </button>
+            </div>
+          )}
         </div>
 
         {showForm && (

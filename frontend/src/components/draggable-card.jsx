@@ -28,6 +28,9 @@ export function DraggableCard({task, onEdit, onDelete}) {
       }`}
     >
       <h4 className="font-medium text-sm mb-1">{task.title}</h4>
+      {task.user && (
+        <p className="text-xs text-gray-600 mb-1">{task.user.email.split('@')[0]}</p>
+      )}
       {task.description && (
         <p className="text-xs text-gray-600 mb-2 line-clamp-2">{task.description}</p>
       )}

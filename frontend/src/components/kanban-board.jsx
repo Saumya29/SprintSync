@@ -146,6 +146,9 @@ export function KanbanBoard({tasks, onEdit, onDelete, onStatusChange}) {
         {activeTask ? (
           <div className="bg-white p-3 rounded shadow-lg opacity-90 cursor-grabbing">
             <h4 className="font-medium text-sm mb-1">{activeTask.title}</h4>
+            {activeTask.user && (
+              <p className="text-xs text-gray-600 mb-1">{activeTask.user.email.split('@')[0]}</p>
+            )}
             {activeTask.description && (
               <p className="text-xs text-gray-600 mb-2 line-clamp-2">{activeTask.description}</p>
             )}

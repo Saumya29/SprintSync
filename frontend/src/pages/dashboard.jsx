@@ -188,13 +188,15 @@ export default function Dashboard() {
               >
                 List
               </Button>
-              <Button
-                variant={viewMode === 'analytics' ? 'default' : 'outline'}
-                onClick={() => setViewMode('analytics')}
-                size="sm"
-              >
-                Analytics
-              </Button>
+              {userIsAdmin && (
+                <Button
+                  variant={viewMode === 'analytics' ? 'default' : 'outline'}
+                  onClick={() => setViewMode('analytics')}
+                  size="sm"
+                >
+                  Analytics
+                </Button>
+              )}
             </div>
             
             {viewMode === 'list' && (
@@ -264,7 +266,7 @@ export default function Dashboard() {
                 <p className="text-gray-500">Loading tasks...</p>
               </div>
             ) : viewMode === 'analytics' ? (
-              <AnalyticsChart tasks={tasks} />
+              <AnalyticsChart />
             ) : viewMode === 'kanban' ? (
               <KanbanBoard
                 tasks={tasks}

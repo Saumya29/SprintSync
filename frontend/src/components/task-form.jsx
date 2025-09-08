@@ -132,7 +132,7 @@ export function TaskForm({
 
         <div>
           <label htmlFor="totalMinutes" className="block text-sm font-medium mb-2">
-            Estimated Time (minutes)
+            Time Spent (minutes)
           </label>
           <Input
             id="totalMinutes"
@@ -141,7 +141,6 @@ export function TaskForm({
             value={formData.totalMinutes}
             onChange={handleChange}
             min="0"
-            placeholder="e.g., 120"
           />
         </div>
       </div>

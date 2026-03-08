@@ -1,46 +1,45 @@
 # SprintSync
 
-A lean task management tool with AI assistance for engineering teams.
+A lightweight sprint tracker where engineers log work and an LLM helps estimate and plan the next sprint.
 
-## Overview
+## Demo
 
-SprintSync is an internal tool designed for fast-moving AI consultancies to help engineers:
+<video src="demo.mp4" width="100%" autoplay loop muted playsinline></video>
 
-- Log work and track time on tasks
-- Manage task status transitions (To Do → In Progress → Done)
-- Get AI-powered assistance for task planning
-- Track project progress efficiently
-- Collaborate on sprints with team members
+![Demo](demo.gif)
 
-## Tech Stack
+## Why I built this
 
-### Backend
+Every sprint planning meeting felt like guesswork. How many points can we take on? What keeps getting carried over? I wanted a tracker that actually learns from past sprints and helps plan the next one - not just a board to move cards around.
 
-- **Runtime**: Node.js with Express.js - Fast development, rich ecosystem for rapid MVP iteration
-- **Database**: PostgreSQL with Prisma ORM - Type-safe database queries, automatic migrations, excellent developer experience
-- **Authentication**: JWT-based authentication - Stateless, scalable solution for API security
-- **AI Integration**: Google Generative AI (Gemini) - Cost-effective AI assistance for task planning
-- **Testing**: Jest - Industry standard with great async support
-- **API Documentation**: Auto-generated RESTful API docs - Reduces documentation overhead
+## What it does
 
-### Frontend
+- **Sprint board** - Kanban-style task tracking with To Do, In Progress, Done columns
+- **Work logging** - Engineers log tasks with story points and time tracking
+- **AI planning** - Gemini analyzes your team's velocity and recommends capacity, carry-overs, and risk flags for the next sprint
+- **Team collaboration** - Multiple engineers on the same sprint with assignee tracking
 
-- **Framework**: React - Component-based architecture, extensive ecosystem
-- **Styling**: Tailwind CSS - Rapid UI development with utility-first approach
-- **UI Components**: shadcn/ui with Radix UI - Copy-paste components with full customization control
-- **State Management**: Local state with React hooks - Simple, straightforward for current MVP scope
-- **Build Tool**: Create React App - Zero-config setup for quick prototyping
-- **HTTP Client**: Native Fetch API - No external dependencies, modern browser support
-- **Routing**: React Router - De facto standard for React SPAs
+## Stack
 
-### Deployment
+**Frontend:** React, Tailwind CSS, shadcn/ui, React Router
+**Backend:** Node.js, Express, PostgreSQL, Prisma
+**AI:** Google Gemini
+**Deployment:** Vercel (frontend), Render (backend + database)
 
-- **Frontend**: Vercel - Seamless React deployment with automatic CI/CD
-- **Backend**: Render - Managed Node.js hosting with auto-scaling
-- **Database**: Render PostgreSQL - Managed database with automated backups
-- **Containerization**: Docker - Consistent development and deployment environments
-- **Environment Management**: dotenv - Secure configuration management
+## Running locally
+
+```bash
+# Backend
+cd backend
+npm install
+npm run dev
+
+# Frontend
+cd frontend
+npm install
+npm start
+```
 
 ## License
 
-Private - Internal use only
+MIT
